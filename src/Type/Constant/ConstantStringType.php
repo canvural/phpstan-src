@@ -15,6 +15,7 @@ use PHPStan\Type\ErrorType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\IntegerRangeType;
+use PHPStan\Type\MethodStringType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
@@ -83,6 +84,10 @@ class ConstantStringType extends StringType implements ConstantScalarType
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
 	{
+		if ($type instanceof MethodStringType) {
+			return TrinaryLogic::createNo();
+		}
+
 		if ($type instanceof GenericClassStringType) {
 			$genericType = $type->getGenericType();
 			if ($genericType instanceof MixedType) {

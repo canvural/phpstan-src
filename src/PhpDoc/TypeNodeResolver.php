@@ -44,6 +44,7 @@ use PHPStan\Type\ConstantTypeHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\Generic\GenericClassStringType;
+use PHPStan\Type\Generic\GenericMethodStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntegerType;
@@ -455,6 +456,15 @@ class TypeNodeResolver
 				$genericType = $genericTypes[0];
 				if ((new ObjectWithoutClassType())->isSuperTypeOf($genericType)->yes() || $genericType instanceof MixedType) {
 					return new GenericClassStringType($genericType);
+				}
+			}
+
+			return new ErrorType();
+		} elseif ($mainTypeName === 'method-string') {
+			if (count($genericTypes) === 1) {
+				$genericType = $genericTypes[0];
+				if ((new ObjectWithoutClassType())->isSuperTypeOf($genericType)->yes() || $genericType instanceof MixedType) {
+					return new GenericMethodStringType($genericType);
 				}
 			}
 

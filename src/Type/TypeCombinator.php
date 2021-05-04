@@ -11,6 +11,7 @@ use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\Constant\ConstantFloatType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Generic\GenericMethodStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeFactory;
@@ -192,7 +193,7 @@ class TypeCombinator
 			if ($types[$i] instanceof IntegerType && !$types[$i] instanceof IntegerRangeType) {
 				$hasGenericScalarTypes[ConstantIntegerType::class] = true;
 			}
-			if ($types[$i] instanceof StringType && !$types[$i] instanceof ClassStringType) {
+			if ($types[$i] instanceof StringType && !$types[$i] instanceof ClassStringType && !$types[$i] instanceof GenericMethodStringType) {
 				$hasGenericScalarTypes[ConstantStringType::class] = true;
 			}
 			if ($types[$i] instanceof IntersectionType) {
