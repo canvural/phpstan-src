@@ -238,6 +238,22 @@ class ImpossibleCheckTypeFunctionCallRuleTest extends \PHPStan\Testing\RuleTestC
 					'Call to function property_exists() with CheckTypeFunctionCall\Bug2221 and \'foo\' will always evaluate to true.',
 					786,
 				],
+				[
+					'Call to function method_exists() with \'Exception\' and method-string<Exception> will always evaluate to true.',
+					857,
+				],
+				[
+					'Call to function method_exists() with Exception and method-string<Exception> will always evaluate to true.',
+					860,
+				],
+				[
+					'Call to function method_exists() with \'Exception\' and method-string<T of Exception> will always evaluate to true.',
+					870,
+				],
+				[
+					'Call to function method_exists() with Exception and method-string<T of Exception> will always evaluate to true.',
+					873,
+				],
 			]
 		);
 	}

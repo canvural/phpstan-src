@@ -613,6 +613,36 @@ function acceptsClassStringUpperBound($string)
 	return new $string;
 }
 
+/**
+ * @template T
+ * @param method-string<T> $string
+ * @return method-string<T>
+ */
+function acceptsMethodString(string $string)
+{
+	return $string;
+}
+
+/**
+ * @template T
+ *
+ * @param \ReflectionClass<T> $class
+ *
+ * @return array<int, method-string<T>>
+ */
+function methodNames(\ReflectionClass $class, int $filter = null) : array {
+	return array_map(
+	/**
+	 * @return method-string<T>
+	 */
+		function (\ReflectionMethod $method) : string {
+			return $method->name;
+		},
+		$class->getMethods($filter)
+	);
+}
+
+assertType('array<int, method-string<Exception>>', methodNames(new \ReflectionClass(\Exception::class)));
 
 /**
  * @template TNodeType of \PhpParser\Node
@@ -743,6 +773,8 @@ function testClasses()
 	assertType('Exception', acceptsClassStringUpperBound(\Exception::class));
 	assertType('Exception', acceptsClassStringUpperBound(\Throwable::class));
 	assertType('InvalidArgumentException', acceptsClassStringUpperBound(\InvalidArgumentException::class));
+
+	assertType('method-string<stdClass>', acceptsMethodString(\stdClass::class));
 
 	$rule = new SomeRule();
 	assertType(StaticCall::class, $rule->getNodeInstance());

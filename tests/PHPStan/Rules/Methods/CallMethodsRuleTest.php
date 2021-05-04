@@ -489,6 +489,10 @@ class CallMethodsRuleTest extends \PHPStan\Testing\RuleTestCase
 				'Parameter #1 $test of method Test\NumericStringParam::sayHello() expects string&numeric, \'abc\' given.',
 				1658,
 			],
+			[
+				'Parameter #1 $className of method Test\GenericMethodString::doFoo() expects method-string<Exception>, string given.',
+				1695,
+			],
 		]);
 	}
 
@@ -762,6 +766,10 @@ class CallMethodsRuleTest extends \PHPStan\Testing\RuleTestCase
 			[
 				'Parameter #1 $test of method Test\NumericStringParam::sayHello() expects string&numeric, \'abc\' given.',
 				1658,
+			],
+			[
+				'Parameter #1 $className of method Test\GenericMethodString::doFoo() expects method-string<Exception>, string given.',
+				1695,
 			],
 		]);
 	}

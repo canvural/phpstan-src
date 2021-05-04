@@ -463,7 +463,7 @@ class TypeNodeResolver
 		} elseif ($mainTypeName === 'method-string') {
 			if (count($genericTypes) === 1) {
 				$genericType = $genericTypes[0];
-				if ((new ObjectWithoutClassType())->isSuperTypeOf($genericType)->yes() || $genericType instanceof MixedType) {
+				if ($genericType instanceof TypeWithClassName || $genericType instanceof MixedType) {
 					return new GenericMethodStringType($genericType);
 				}
 			}

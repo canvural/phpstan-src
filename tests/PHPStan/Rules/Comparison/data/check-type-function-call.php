@@ -845,3 +845,32 @@ class InArray2
 	}
 
 }
+
+class MethodExistsWithMethodString
+{
+
+	/**
+	 * @param method-string<\Exception> $methodName
+	 */
+	public function doFoo(string $methodName): void
+	{
+		if (method_exists(\Exception::class, $methodName)) { // always true
+		}
+
+		if (method_exists(new \Exception(), $methodName)) { // always true
+		}
+	}
+
+	/**
+	 * @template T of \Exception
+	 * @param method-string<T> $methodName
+	 */
+	public function doBar(string $methodName): void
+	{
+		if (method_exists(\Exception::class, $methodName)) { // always true
+		}
+
+		if (method_exists(new \Exception(), $methodName)) { // always true
+		}
+	}
+}

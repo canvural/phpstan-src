@@ -44,4 +44,10 @@ class FooWithProperty
 	/** @var self::BLABLA */
 	private $unknownClassConstant2;
 
+	/** @var method-string<int> */
+	private $methodStringInt;
+
+	/** @var method-string<\Exception> */
+	private $methodStringValid;
+
 }

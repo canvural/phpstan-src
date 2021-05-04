@@ -55,6 +55,10 @@ class IncompatiblePropertyPhpDocTypeRuleTest extends \PHPStan\Testing\RuleTestCa
 				'PHPDoc tag @var for property InvalidPhpDoc\FooWithProperty::$unknownClassConstant2 contains unresolvable type.',
 				45,
 			],
+			[
+				'PHPDoc tag @var for property InvalidPhpDoc\FooWithProperty::$methodStringInt contains unresolvable type.',
+				48,
+			],
 		]);
 	}
 

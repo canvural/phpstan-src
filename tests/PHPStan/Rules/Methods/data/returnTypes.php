@@ -1239,3 +1239,22 @@ class NeverReturn
 	}
 
 }
+
+class EventSubscriber
+{
+	/**
+	 * @return array<class-string|string, method-string<self>|array{0: method-string<self>, 1?: int}>
+	 */
+	public static function getSubscribedEvents(): array
+	{
+		return [
+			'Event' => 'onEvent',
+			'event_name' => ['onAnotherEvent', 100],
+			'foo' => 'bar' // bar is not a method
+		];
+	}
+
+	public function onEvent(): void {}
+	public function onAnotherEvent(): void {}
+}
+\PHPStan\dumpType(EventSubscriber::getSubscribedEvents());

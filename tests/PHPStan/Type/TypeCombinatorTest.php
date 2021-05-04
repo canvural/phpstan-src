@@ -14,6 +14,7 @@ use PHPStan\Type\Constant\ConstantFloatType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
+use PHPStan\Type\Generic\GenericMethodStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\Generic\TemplateObjectWithoutClassType;
@@ -1760,6 +1761,102 @@ class TypeCombinatorTest extends \PHPStan\Testing\TestCase
 				MixedType::class,
 				'mixed=implicit',
 			],
+			[
+				[
+					new StringType(),
+					new MethodStringType(),
+				],
+				StringType::class,
+				'string',
+			],
+			[
+				[
+					new MethodStringType(),
+					new ConstantStringType('foo'),
+				],
+				MethodStringType::class,
+				'method-string',
+			],
+			[
+				[
+					new MethodStringType(),
+					new IntegerType(),
+				],
+				UnionType::class,
+				'int|method-string',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new ConstantStringType('getMessage'),
+				],
+				GenericMethodStringType::class,
+				'method-string<Exception>',
+			],
+			[
+				[
+					new ConstantStringType('not-exists'),
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+				],
+				UnionType::class,
+				'\'not-exists\'|method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new MethodStringType(),
+				],
+				MethodStringType::class,
+				'method-string',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new StringType(),
+				],
+				StringType::class,
+				'string',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+				],
+				GenericMethodStringType::class,
+				'method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\Throwable::class)),
+				],
+				GenericMethodStringType::class,
+				'method-string<Throwable>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\InvalidArgumentException::class)),
+				],
+				GenericMethodStringType::class,
+				'method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\DateTime::class)),
+				],
+				UnionType::class,
+				'method-string<DateTime>|method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new ConstantStringType(\Exception::class),
+				],
+				UnionType::class,
+				'\'Exception\'|method-string<Exception>',
+			],
 		];
 	}
 
@@ -2941,6 +3038,78 @@ class TypeCombinatorTest extends \PHPStan\Testing\TestCase
 						new NonEmptyArrayType(),
 					]),
 					new NeverType(),
+				],
+				NeverType::class,
+				'*NEVER*',
+			],
+			[
+				[
+					new ConstantStringType('getMessage'),
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+				],
+				ConstantStringType::class,
+				'\'getMessage\'',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new MethodStringType(),
+				],
+				GenericMethodStringType::class,
+				'method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new StringType(),
+				],
+				GenericMethodStringType::class,
+				'method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+				],
+				GenericMethodStringType::class,
+				'method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\Throwable::class)),
+				],
+				GenericMethodStringType::class,
+				'method-string<Exception>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\InvalidArgumentException::class)),
+				],
+				GenericMethodStringType::class,
+				'method-string<InvalidArgumentException>',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new GenericMethodStringType(new ObjectType(\stdClass::class)),
+				],
+				NeverType::class,
+				'*NEVER*',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Throwable::class)),
+					new ConstantStringType('getMessage'),
+				],
+				ConstantStringType::class,
+				'\'getMessage\'',
+			],
+			[
+				[
+					new GenericMethodStringType(new ObjectType(\Exception::class)),
+					new ConstantStringType('not-exists'),
 				],
 				NeverType::class,
 				'*NEVER*',

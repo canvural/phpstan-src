@@ -267,6 +267,10 @@ class ReturnTypeRuleTest extends \PHPStan\Testing\RuleTestCase
 				'Method ReturnTypes\NeverReturn::doFoo() should never return but return statement found.',
 				1238,
 			],
+			[
+				'Method ReturnTypes\EventSubscriber::getSubscribedEvents() should return array<string, array(0 => method-string<ReturnTypes\EventSubscriber>, ?1 => int)|method-string<ReturnTypes\EventSubscriber>> but returns array(\'Event\' => \'onEvent\', \'event_name\' => array(\'onAnotherEvent\', 100), \'foo\' => \'bar\').',
+				1250,
+			],
 		]);
 	}
 

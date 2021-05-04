@@ -1678,3 +1678,20 @@ class XmlReaderOpen
 	}
 
 }
+
+class GenericMethodString
+{
+
+	/**
+	 * @param method-string<\Exception> $className
+	 */
+	public function doFoo(string $className): void
+	{
+
+	}
+
+	public function doBar(): void
+	{
+		$this->doFoo('bar');
+	}
+}

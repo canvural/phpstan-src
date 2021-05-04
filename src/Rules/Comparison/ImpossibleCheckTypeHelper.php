@@ -13,6 +13,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Generic\GenericMethodStringType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
@@ -155,6 +156,16 @@ class ImpossibleCheckTypeHelper
 							if ($objectType->hasMethod($methodType->getValue())->no()) {
 								return false;
 							}
+						}
+					}
+
+					if ($methodType instanceof GenericMethodStringType) {
+						if ($objectType instanceof ConstantStringType) {
+							$objectType = new ObjectType($objectType->getValue());
+						}
+
+						if ($objectType instanceof TypeWithClassName) {
+							return $objectType->equals($methodType->getGenericType());
 						}
 					}
 				}
