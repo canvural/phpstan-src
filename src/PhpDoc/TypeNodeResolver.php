@@ -49,6 +49,7 @@ use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\IterableType;
+use PHPStan\Type\MethodStringType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NonexistentParentClassType;
@@ -139,6 +140,9 @@ class TypeNodeResolver
 
 			case 'string':
 				return new StringType();
+
+			case 'method-string':
+				return new MethodStringType();
 
 			case 'class-string':
 				return new ClassStringType();
