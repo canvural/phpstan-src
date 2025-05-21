@@ -25,13 +25,15 @@ class WeirdBugTest extends RuleTestCase
 			$this->markTestSkipped('Test requires PHP 8.0');
 		}
 
-		$this->analyse([__DIR__ . '/data/weird-bug-test.php'], []);
+		// Point to the correct analysis target
+		$this->analyse([__DIR__ . '/../../Analyser/data/weird-bug/weird-bug.php'], []);
 	}
 
 	public static function getAdditionalConfigFiles(): array
 	{
+		// Point to the correct configuration file
 		return [
-			__DIR__ . '/data/weird-bug-config.neon',
+			__DIR__ . '/../../Analyser/data/weird-bug/phpstan.neon',
 		];
 	}
 

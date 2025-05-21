@@ -1228,10 +1228,17 @@ final class MutatingScope implements Scope
 				if (!$param->var instanceof Variable || !is_string($param->var->name)) {
 					throw new ShouldNotHappenException();
 				}
+				$declaredParameterType = $this->getFunctionType($param->type, $this->isParameterValueNullable($param), false);
+				$finalParameterType = $declaredParameterType;
+
+				// $callableParameters is determined after this loop in the original code,
+				// so we apply this logic after $callableParameters is initialized.
+				// This will be handled in the second part of the diff.
+
 				$parameters[] = new NativeParameterReflection(
 					$param->var->name,
 					$firstOptionalParameterIndex !== null && $i >= $firstOptionalParameterIndex,
-					$this->getFunctionType($param->type, $this->isParameterValueNullable($param), false),
+					$declaredParameterType, // Temporarily use declared, will be refined later
 					$param->byRef
 						? PassedByReference::createCreatesNewVariable()
 						: PassedByReference::createNo(),
@@ -1255,6 +1262,43 @@ final class MutatingScope implements Scope
 						$callableParameters = $this->nodeScopeResolver->createCallableParameters($this, $node, null, $inParameter->getType());
 					}
 				}
+			}
+
+			// Refine parameter types using $callableParameters
+			if ($callableParameters !== null) {
+				$refinedParameters = [];
+				foreach ($node->params as $i => $param) {
+					if (!$param->var instanceof Variable || !is_string($param->var->name)) {
+						throw new ShouldNotHappenException(); // Should have been caught earlier
+					}
+					$declaredParameterType = $this->getFunctionType($param->type, $this->isParameterValueNullable($param), false);
+					$finalParameterType = $declaredParameterType;
+
+					if (isset($callableParameters[$i])) {
+						$callableParamType = $callableParameters[$i]->getType();
+						$finalParameterType = self::intersectButNotNever($declaredParameterType, $callableParamType);
+					} elseif (count($callableParameters) > 0) {
+						$lastCallableParameter = $callableParameters[count($callableParameters) - 1];
+						if ($lastCallableParameter->isVariadic()) {
+							$callableParamType = $lastCallableParameter->getType();
+							$finalParameterType = self::intersectButNotNever($declaredParameterType, $callableParamType);
+						} elseif ($param->variadic) {
+							$finalParameterType = self::intersectButNotNever($declaredParameterType, new MixedType());
+						}
+					} elseif ($param->variadic) {
+						$finalParameterType = self::intersectButNotNever($declaredParameterType, new MixedType());
+					}
+
+					$refinedParameters[] = new NativeParameterReflection(
+						$param->var->name,
+						$parameters[$i]->isOptional(), // Keep original optionality
+						$finalParameterType,
+						$parameters[$i]->passedByReference(), // Keep original passedByReference
+						$param->variadic,
+						$parameters[$i]->getDefaultValue(), // Keep original default value
+					);
+				}
+				$parameters = $refinedParameters; // Replace with refined parameters
 			}
 
 			if ($node instanceof Expr\ArrowFunction) {
